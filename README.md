@@ -1,12 +1,10 @@
-Certainly! Here is the README in English, highlighting the use of generic controllers and services for CRUD operations, and mentioning the contributors Emanuel Moura and Jaymeson Mendes.
 
----
 
 # NestJS Project with Generic Controllers and Services
 
 ## Description
 
-This project is an example application using NestJS and Prisma, which implements a generic model of controller and service to perform CRUD operations. The main advantage of this approach is the reuse of code and ease of maintenance, allowing for the quick creation of new entities and their associated operations.
+This project is an example application using NestJS and Prisma, which implements a generic model of controller and service to perform CRUD operations. The main advantage of this approach is the reuse of code and ease of maintenance, allowing for the quick creation of new entities and their associated operations. Additionally, it includes robust error handling to ensure reliable and informative error responses.
 
 ## Features
 
@@ -14,6 +12,7 @@ This project is an example application using NestJS and Prisma, which implements
 - **Generic Services**: Implements generic CRUD logic that can be applied to any data model, facilitating integration with new entity types.
 - **Prisma ORM**: Uses Prisma for database interaction, providing an efficient and secure development environment.
 - **DTOs with Validation**: Uses DTOs (Data Transfer Objects) with `class-validator` for input data validation, ensuring data integrity.
+- **Error Handling**: Implements custom exception filters and middleware to handle errors gracefully and provide clear error messages.
 
 ## Installation
 
@@ -146,14 +145,163 @@ export class CreateUserDto {
 }
 ```
 
+## Error Handling
+
+### Custom Exception Filter
+
+A custom exception filter is used to handle errors gracefully and return meaningful error messages. Here is an example of a custom exception filter:
+
+```typescript
+// src/common/exceptions/custom-exception.filter.ts
+
+import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { Request, Response } from 'express';
+
+@Catch(HttpException)
+export class CustomExceptionFilter implements ExceptionFilter {
+  catch(exception: HttpException, host: ArgumentsHost) {
+    const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
+    const status = exception.getStatus ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
+
+    response.status(status).json({
+      statusCode: status,
+      timestamp: new Date().toISOString(),
+      path: request.url,
+      message: exception.message || 'Unexpected error',
+    });
+  }
+}
+```
+
+### Applying the Exception Filter Globally
+
+You can apply the exception filter globally in your application. Update the `main.ts` file:
+
+```typescript
+// src/main.ts
+
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { CustomExceptionFilter } from './common/exceptions/custom-exception.filter';
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
+  app.useGlobalFilters(new CustomExceptionFilter());
+  await app.listen(3000);
+}
+
+bootstrap();
+```
+
+### Error Handling in Services
+
+In services, you should catch errors and throw appropriate exceptions. Here is an example of error handling in the generic service:
+
+```typescript
+// src/common/services/base-generic-service.ts
+
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+
+type Delegate<T> = {
+  findMany: (args?: any) => Promise<T[]>;
+  findUnique: (args: any) => Promise<T | null>;
+  create: (args: any) => Promise<T>;
+  update: (args: any) => Promise<T>;
+  delete: (args: any) => Promise<T>;
+};
+
+function createDelegate<T>(model: any): Delegate<T> {
+  return {
+    findMany: (args) => model.findMany(args),
+    findUnique: (args) => model.findUnique(args),
+    create: (args) => model.create(args),
+    update: (args) => model.update(args),
+    delete: (args) => model.delete(args),
+  };
+}
+
+@Injectable()
+export class BaseGenericService<T> {
+  private readonly delegate: Delegate<T>;
+
+  constructor(prismaService: PrismaService, modelName: keyof PrismaService) {
+    this.delegate = createDelegate<T>(prismaService[modelName]);
+  }
+
+  async findAll(args?: any): Promise<T[]> {
+    try {
+      return await this.delegate.findMany(args);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async findOne(args: any): Promise<T | null> {
+    try {
+      const entity = await this.delegate.findUnique(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async create(args: any): Promise<T> {
+    try {
+      return await this.delegate.create(args);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async update(args: any): Promise<T> {
+    try {
+      const entity = await this.delegate.update(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found for update`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async delete(args: any): Promise<T> {
+    try {
+      const entity = await this.delegate.delete(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found for deletion`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+}
+```
+
 ## Contribution
 
-Contributions are welcome! If you have suggestions or encounter issues, feel free to open an issue or a pull request.
+Contributions are welcome! If you have suggestions or encounter issues, feel free to open an
+
+ issue or a pull request.
 
 ### Contributors
 
 - **Emanuel Moura**
 - **Jaymeson Mendes**
+- **Francisco André**
 
 ## License
 
@@ -161,10 +309,10 @@ This project is licensed under the [MIT License](LICENSE).
 
 ---
 
-This README provides an overview of the project and highlights the main benefits of using generic controllers and services. With this approach, you can quickly add new entities to your project while maintaining code consistency and quality.
+This README provides an overview of the project and highlights the main benefits of using generic controllers and services, along with robust error handling. With this approach, you can quickly add new entities to your project while maintaining code consistency and quality.
 
 If you have any further questions or need additional help, feel free to ask! 🚀🔨🤖🔧
 
 ---
 
-This README covers the necessary information for understanding the project, how it is built, and acknowledges the contributions of Emanuel Moura and Jaymeson Mendes. If you need anything else, just let me know!
+This README covers the necessary information for understanding the project, how it is built, and acknowledges the contributions of Emanuel Moura, Jaymeson Mendes, and Francisco André. If you need anything else, just let me know!

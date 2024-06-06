@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+// src/common/services/base-generic-service.ts
+
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
 type Delegate<T> = {
@@ -28,22 +34,54 @@ export class BaseGenericService<T> {
   }
 
   async findAll(args?: any): Promise<T[]> {
-    return this.delegate.findMany(args);
+    try {
+      return await this.delegate.findMany(args);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findOne(args: any): Promise<T | null> {
-    return this.delegate.findUnique(args);
+    try {
+      const entity = await this.delegate.findUnique(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async create(args: any): Promise<T> {
-    return this.delegate.create(args);
+    try {
+      return await this.delegate.create(args);
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async update(args: any): Promise<T> {
-    return this.delegate.update(args);
+    try {
+      const entity = await this.delegate.update(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found for update`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async delete(args: any): Promise<T> {
-    return this.delegate.delete(args);
+    try {
+      const entity = await this.delegate.delete(args);
+      if (!entity) {
+        throw new NotFoundException(`Entity not found for deletion`);
+      }
+      return entity;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

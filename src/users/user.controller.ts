@@ -15,6 +15,6 @@ export class UserController extends BaseGenericController<
   UpdateUserDto
 > {
   constructor(userService: UserService) {
-    super(userService);
+    super(userService, 'users');
   }
 }
