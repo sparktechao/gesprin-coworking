@@ -1,6 +1,4 @@
-Certainly! Here is the README in English, highlighting the use of generic controllers and services for CRUD operations, and mentioning the contributors Emanuel Moura and Jaymeson Mendes.
 
----
 
 # NestJS Project with Generic Controllers and Services
 
