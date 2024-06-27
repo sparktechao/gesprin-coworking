@@ -1,19 +1,15 @@
-// src/users/dto/create-user.dto.ts
-
-import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsEmail } from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
-
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
+  username: string;
 
   @IsString()
   @IsNotEmpty()
   password: string;
-}
 
-export class UpdateUserDto extends CreateUserDto {}
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+}

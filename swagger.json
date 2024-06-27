@@ -1,0 +1,1397 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Coworking Management System",
+      "description": "API documentation for the Coworking Management System",
+      "version": "1.0.0"
+    },
+    "tags": [
+      { "name": "coworkers", "description": "Operations about coworkers" },
+      { "name": "contracts", "description": "Operations about contracts" },
+      { "name": "contract-values", "description": "Operations about contract values" },
+      { "name": "payments", "description": "Operations about payments" },
+      { "name": "rooms", "description": "Operations about rooms" },
+      { "name": "workstations", "description": "Operations about workstations" },
+      { "name": "prints", "description": "Operations about prints" },
+      { "name": "invoices", "description": "Operations about invoices" },
+      { "name": "reservations", "description": "Operations about reservations" },
+      { "name": "reports", "description": "Operations about reports" }
+    ],
+    "paths": {
+      "/coworkers": {
+        "get": {
+          "tags": ["coworkers"],
+          "summary": "Retrieve all coworkers",
+          "responses": {
+            "200": {
+              "description": "List of all coworkers",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Coworker" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["coworkers"],
+          "summary": "Create a new coworker",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateCoworkerDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created coworker",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Coworker" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/coworkers/{id}": {
+        "get": {
+          "tags": ["coworkers"],
+          "summary": "Retrieve a coworker by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The coworker",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Coworker" }
+                }
+              }
+            },
+            "404": {
+              "description": "Coworker not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["coworkers"],
+          "summary": "Update a coworker by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateCoworkerDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated coworker",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Coworker" }
+                }
+              }
+            },
+            "404": {
+              "description": "Coworker not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["coworkers"],
+          "summary": "Delete a coworker by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted coworker",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Coworker" }
+                }
+              }
+            },
+            "404": {
+              "description": "Coworker not found"
+            }
+          }
+        }
+      },
+      "/contracts": {
+        "get": {
+          "tags": ["contracts"],
+          "summary": "Retrieve all contracts",
+          "responses": {
+            "200": {
+              "description": "List of all contracts",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Contract" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["contracts"],
+          "summary": "Create a new contract",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateContractDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created contract",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Contract" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/contracts/{id}": {
+        "get": {
+          "tags": ["contracts"],
+          "summary": "Retrieve a contract by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The contract",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Contract" }
+                }
+              }
+            },
+            "404": {
+              "description": "Contract not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["contracts"],
+          "summary": "Update a contract by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateContractDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated contract",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Contract" }
+                }
+              }
+            },
+            "404": {
+              "description": "Contract not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["contracts"],
+          "summary": "Delete a contract by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted contract",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Contract" }
+                }
+              }
+            },
+            "404": {
+              "description": "Contract not found"
+            }
+          }
+        }
+      },
+      "/contract-values": {
+        "get": {
+          "tags": ["contract-values"],
+          "summary": "Retrieve all contract values",
+          "responses": {
+            "200": {
+              "description": "List of all contract values",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/ContractValue" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["contract-values"],
+          "summary": "Create a new contract value",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateContractValueDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created contract value",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ContractValue" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/contract-values/{id}": {
+        "get": {
+          "tags": ["contract-values"],
+          "summary": "Retrieve a contract value by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The contract value",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/ContractValue" }
+                }
+              }
+            },
+            "404": {
+              "description": "Contract value not found"
+            }
+          }
+        }
+      },
+      "/payments": {
+        "get": {
+          "tags": ["payments"],
+          "summary": "Retrieve all payments",
+          "responses": {
+            "200": {
+              "description": "List of all payments",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Payment" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["payments"],
+          "summary": "Register a payment",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatePaymentDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The registered payment",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Payment" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/payments/create": {
+      "post": {
+        "tags": ["payments"],
+        "summary": "Create a new payment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreatePaymentDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created payment",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Payment" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+      "/payments/{id}": {
+        "get": {
+          "tags": ["payments"],
+          "summary": "Retrieve a payment by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The payment",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Payment" }
+                }
+              }
+            },
+            "404": {
+              "description": "Payment not found"
+            }
+          }
+        }
+      },
+      "/rooms": {
+        "get": {
+          "tags": ["rooms"],
+          "summary": "Retrieve all rooms",
+          "responses": {
+            "200": {
+              "description": "List of all rooms",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Room" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["rooms"],
+          "summary": "Create a new room",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateRoomDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created room",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Room" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/rooms/inactive-contracts": {
+        "get": {
+          "tags": ["rooms"],
+          "summary": "Retrieve all rooms with inactive contracts",
+          "responses": {
+            "200": {
+              "description": "List of all rooms with inactive contracts",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Room" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      
+      },
+      "/rooms/{id}": {
+        "get": {
+          "tags": ["rooms"],
+          "summary": "Retrieve a room by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The room",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Room" }
+                }
+              }
+            },
+            "404": {
+              "description": "Room not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["rooms"],
+          "summary": "Update a room by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateRoomDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated room",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Room" }
+                }
+              }
+            },
+            "404": {
+              "description": "Room not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["rooms"],
+          "summary": "Delete a room by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted room",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Room" }
+                }
+              }
+            },
+            "404": {
+              "description": "Room not found"
+            }
+          }
+        }
+      },
+      "/workstations": {
+        "get": {
+          "tags": ["workstations"],
+          "summary": "Retrieve all workstations",
+          "responses": {
+            "200": {
+              "description": "List of all workstations",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Workstation" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["workstations"],
+          "summary": "Create a new workstation",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateWorkstationDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created workstation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Workstation" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/workstations/{id}": {
+        "get": {
+          "tags": ["workstations"],
+          "summary": "Retrieve a workstation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The workstation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Workstation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Workstation not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["workstations"],
+          "summary": "Update a workstation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateWorkstationDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated workstation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Workstation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Workstation not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["workstations"],
+          "summary": "Delete a workstation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted workstation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Workstation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Workstation not found"
+            }
+          }
+        }
+      },
+      "/prints": {
+        "get": {
+          "tags": ["prints"],
+          "summary": "Retrieve all print jobs",
+          "responses": {
+            "200": {
+              "description": "List of all print jobs",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/PrintJob" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["prints"],
+          "summary": "Register a print job",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreatePrintJobDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The registered print job",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/PrintJob" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/prints/{id}": {
+        "get": {
+          "tags": ["prints"],
+          "summary": "Retrieve a print job by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The print job",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/PrintJob" }
+                }
+              }
+            },
+            "404": {
+              "description": "Print job not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["prints"],
+          "summary": "Update a print job by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdatePrintJobDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated print job",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/PrintJob" }
+                }
+              }
+            },
+            "404": {
+              "description": "Print job not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["prints"],
+          "summary": "Delete a print job by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted print job",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/PrintJob" }
+                }
+              }
+            },
+            "404": {
+              "description": "Print job not found"
+            }
+          }
+        }
+      },
+      "/invoices": {
+        "get": {
+          "tags": ["invoices"],
+          "summary": "Retrieve all invoices",
+          "responses": {
+            "200": {
+              "description": "List of all invoices",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Invoice" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["invoices"],
+          "summary": "Create a new invoice",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateInvoiceDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created invoice",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Invoice" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/invoices/{id}": {
+        "get": {
+          "tags": ["invoices"],
+          "summary": "Retrieve an invoice by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The invoice",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Invoice" }
+                }
+              }
+            },
+            "404": {
+              "description": "Invoice not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["invoices"],
+          "summary": "Update an invoice by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateInvoiceDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated invoice",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Invoice" }
+                }
+              }
+            },
+            "404": {
+              "description": "Invoice not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["invoices"],
+          "summary": "Delete an invoice by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted invoice",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Invoice" }
+                }
+              }
+            },
+            "404": {
+              "description": "Invoice not found"
+            }
+          }
+        }
+      },
+      "/invoices/subscription": {
+      "post": {
+        "tags": ["invoices"],
+        "summary": "Create a new subscription invoice",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateSubscriptionInvoiceDto" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created invoice",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Invoice" }
+              }
+            }
+          }
+        }
+      }
+    },
+      "/reservations": {
+        "get": {
+          "tags": ["reservations"],
+          "summary": "Retrieve all reservations",
+          "responses": {
+            "200": {
+              "description": "List of all reservations",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Reservation" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["reservations"],
+          "summary": "Create a new reservation",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CreateReservationDto" }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "The created reservation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Reservation" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/reservations/{id}": {
+        "get": {
+          "tags": ["reservations"],
+          "summary": "Retrieve a reservation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The reservation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Reservation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Reservation not found"
+            }
+          }
+        },
+        "put": {
+          "tags": ["reservations"],
+          "summary": "Update a reservation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UpdateReservationDto" }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "The updated reservation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Reservation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Reservation not found"
+            }
+          }
+        },
+        "delete": {
+          "tags": ["reservations"],
+          "summary": "Delete a reservation by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": { "type": "string" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "The deleted reservation",
+              "content": {
+                "application/json": {
+                  "schema": { "$ref": "#/components/schemas/Reservation" }
+                }
+              }
+            },
+            "404": {
+              "description": "Reservation not found"
+            }
+          }
+        }
+      },
+      "/reports/reservations": {
+        "get": {
+          "tags": ["reports"],
+          "summary": "Retrieve reservation report",
+          "parameters": [
+            {
+              "name": "startDate",
+              "in": "query",
+              "required": true,
+              "schema": { "type": "string", "format": "date-time" }
+            },
+            {
+              "name": "endDate",
+              "in": "query",
+              "required": true,
+              "schema": { "type": "string", "format": "date-time" }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Reservation report",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/Reservation" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "Coworker": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "email": { "type": "string" },
+            "phone": { "type": "string" },
+            "nif": { "type": "string" },
+            "commercialCertificate": { "type": "string" },
+            "notificationPreferences": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "CreateCoworkerDto": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string" },
+            "phone": { "type": "string" },
+            "nif": { "type": "string" },
+            "commercialCertificate": { "type": "string" },
+            "notificationPreferences": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "required": ["name", "email", "phone", "nif", "commercialCertificate", "notificationPreferences"]
+        },
+        "UpdateCoworkerDto": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "email": { "type": "string" },
+            "phone": { "type": "string" },
+            "nif": { "type": "string" },
+            "commercialCertificate": { "type": "string" },
+            "notificationPreferences": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "Contract": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "coworkerId": { "type": "string" },
+            "nuc": { "type": "string" },
+            "startDate": { "type": "string", "format": "date-time" },
+            "endDate": { "type": "string", "format": "date-time" },
+            "contractType": { "type": "string" },
+            "status": { "type": "string" },
+            "previousContractId": { "type": "string" },
+            "roomId": { "type": "string" }
+          }
+        },
+        "CreateContractDto": {
+          "type": "object",
+          "properties": {
+            "coworkerId": { "type": "string" },
+            "nuc": { "type": "string" },
+            "startDate": { "type": "string", "format": "date-time" },
+            "endDate": { "type": "string", "format": "date-time" },
+            "contractType": { "type": "string" },
+            "status": { "type": "string" },
+            "amount": { "type": "number" },
+            "previousContractId": { "type": "string" },
+            "roomId": { "type": "string" }
+          },
+          "required": ["coworkerId", "nuc", "startDate", "endDate", "contractType", "status", "amount"]
+        },
+        "UpdateContractDto": {
+          "type": "object",
+          "properties": {
+            "coworkerId": { "type": "string" },
+            "nuc": { "type": "string" },
+            "startDate": { "type": "string", "format": "date-time" },
+            "endDate": { "type": "string", "format": "date-time" },
+            "contractType": { "type": "string" },
+            "status": { "type": "string" },
+            "amount": { "type": "number" },
+            "previousContractId": { "type": "string" },
+            "roomId": { "type": "string" }
+          }
+        },
+        "ContractValue": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "contractId": { "type": "string" },
+            "createdAt": { "type": "string", "format": "date-time" },
+            "amount": { "type": "number" }
+          }
+        },
+        "CreateContractValueDto": {
+          "type": "object",
+          "properties": {
+            "contractId": { "type": "string" },
+            "amount": { "type": "number" }
+          },
+          "required": ["contractId", "amount"]
+        },
+        "Payment": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "invoiceId": { "type": "string" },
+            "paymentDate": { "type": "string", "format": "date-time" },
+            "amountPaid": { "type": "number" }
+          }
+        },
+        "CreatePaymentDto": {
+          "type": "object",
+          "properties": {
+            "invoiceId": { "type": "string" },
+            "paymentDate": { "type": "string", "format": "date-time" },
+            "amountPaid": { "type": "number" }
+          },
+          "required": ["invoiceId", "paymentDate", "amountPaid"]
+        },
+        "UpdatePaymentDto": {
+          "type": "object",
+          "properties": {
+            "invoiceId": { "type": "string" },
+            "paymentDate": { "type": "string", "format": "date-time" },
+            "amountPaid": { "type": "number" }
+          }
+        },
+        "Room": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "location": { "type": "string" }
+          }
+        },
+        "CreateRoomDto": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "location": { "type": "string" }
+          },
+          "required": ["name", "location"]
+        },
+        "UpdateRoomDto": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "location": { "type": "string" }
+          }
+        },
+        "Workstation": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "roomId": { "type": "string" },
+            "stationNumber": { "type": "string" }
+          }
+        },
+        "CreateWorkstationDto": {
+          "type": "object",
+          "properties": {
+            "roomId": { "type": "string" },
+            "stationNumber": { "type": "string" }
+          },
+          "required": ["roomId", "stationNumber"]
+        },
+        "UpdateWorkstationDto": {
+          "type": "object",
+          "properties": {
+            "roomId": { "type": "string" },
+            "stationNumber": { "type": "string" }
+          }
+        },
+        "PrintJob": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "coworkerId": { "type": "string" },
+            "printDate": { "type": "string", "format": "date-time" },
+            "pageCount": { "type": "number" }
+          }
+        },
+        "CreatePrintJobDto": {
+          "type": "object",
+          "properties": {
+            "coworkerId": { "type": "string" },
+            "printDate": { "type": "string", "format": "date-time" },
+            "pageCount": { "type": "number" }
+          },
+          "required": ["coworkerId", "printDate", "pageCount"]
+        },
+        "UpdatePrintJobDto": {
+          "type": "object",
+          "properties": {
+            "coworkerId": { "type": "string" },
+            "printDate": { "type": "string", "format": "date-time" },
+            "pageCount": { "type": "number" }
+          }
+        },
+        "Invoice": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "contractId": { "type": "string" },
+            "issueDate": { "type": "string", "format": "date-time" },
+            "amount": { "type": "number" }
+          }
+        },
+        "CreateInvoiceDto": {
+          "type": "object",
+          "properties": {
+            "contractId": { "type": "string" },
+            "issueDate": { "type": "string", "format": "date-time" },
+            "amount": { "type": "number" }
+          },
+          "required": ["contractId", "issueDate", "amount"]
+        },
+        
+          "CreateSubscriptionInvoiceDto": {
+            "type": "object",
+            "properties": {
+              "contractId": { "type": "string" },
+              "numberOfMonths": { "type": "integer" }
+            },
+            "required": ["contractId", "numberOfMonths"]
+          },
+        "UpdateInvoiceDto": {
+          "type": "object",
+          "properties": {
+            "contractId": { "type": "string" },
+            "issueDate": { "type": "string", "format": "date-time" },
+            "amount": { "type": "number" }
+          }
+        },
+        "Reservation": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "roomId": { "type": "string" },
+            "coworkerId": { "type": "string" },
+            "startTime": { "type": "string", "format": "date-time" },
+            "endTime": { "type": "string", "format": "date-time" }
+          }
+        },
+        "CreateReservationDto": {
+          "type": "object",
+          "properties": {
+            "roomId": { "type": "string" },
+            "coworkerId": { "type": "string" },
+            "startTime": { "type": "string", "format": "date-time" },
+            "endTime": { "type": "string", "format": "date-time" }
+          },
+          "required": ["roomId", "coworkerId", "startTime", "endTime"]
+        },
+        "UpdateReservationDto": {
+          "type": "object",
+          "properties": {
+            "roomId": { "type": "string" },
+            "coworkerId": { "type": "string" },
+            "startTime": { "type": "string", "format": "date-time" },
+            "endTime": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    }
+  }
+  

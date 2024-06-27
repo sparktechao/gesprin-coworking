@@ -1,5 +1,4 @@
 // src/common/services/base-generic-service.ts
-
 import {
   Injectable,
   NotFoundException,
@@ -43,7 +42,11 @@ export class BaseGenericService<T> {
 
   async findOne(args: any): Promise<T | null> {
     try {
-      const entity = await this.delegate.findUnique(args);
+      const entity = await this.delegate.findUnique({
+        where: {
+          id: args.where.id.toString(), // Ensure id is treated as a string
+        },
+      });
       if (!entity) {
         throw new NotFoundException(`Entity not found`);
       }

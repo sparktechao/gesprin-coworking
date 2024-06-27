@@ -1,24 +1,156 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum ContractStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRING
+  DRAFT
+}
+
+enum NotificationPreference {
+  SMS
+  EMAIL
+  PHONE
+}
+
+enum ContractType {
+  ROOM
+  DESK
+  VIRTUAL
+}
+
+enum InvoiceStatus {
+  PAID
+  UNPAID
+  OVERDUE
+  CANCELED
+}
+
+
+
+model Coworker {
+  id                      String                   @id @default(uuid())
+  name                    String
+  email                   String                   @unique
+  phone                   String
+  nif                     String
+  commercialCertificate   String
+  notificationPreferences NotificationPreference[]
+  contracts               Contract[]
+  printJobs               PrintJob[]
+  Reservation             Reservation[]
+}
+
+model Room {
+  id           String        @id @default(uuid())
+  name         String
+  location     String
+  workstations Workstation[]
+  contracts    Contract[]
+  Reservation  Reservation[]
+}
+
+model Workstation {
+  id            String     @id @default(uuid())
+  roomId        String
+  stationNumber String
+  room          Room       @relation(fields: [roomId], references: [id])
+  contracts     Contract[] @relation("WorkstationToContract") // Add relation name to contracts field
+  contractId    String? // Add the contractId field
+}
+
+model Contract {
+  id                 String          @id @default(uuid())
+  coworkerId         String          
+  nuc                String
+  startDate          DateTime
+  endDate            DateTime
+  contractType       ContractType   @default(VIRTUAL)
+  previousContractId String?
+  roomId             String?
+  status             ContractStatus
+  coworker           Coworker        @relation(fields: [coworkerId], references: [id])
+  room               Room?           @relation(fields: [roomId], references: [id]) // Specify the references argument
+  contractValues     ContractValue[]
+  invoices           Invoice[]
+  workstation        Workstation[]   @relation("WorkstationToContract") // Add opposite relation field
+  
+
+  @@index([coworkerId])
+  @@index([nuc])
+}
+
+model ContractValue {
+  id          String   @id @default(uuid())
+  contractId  String
+  createdAt   DateTime @default(now())
+  amount      Float
+  contract    Contract @relation(fields: [contractId], references: [id])
+
+  @@index([contractId])
+}
+
+model Invoice {
+  id            String         @id @default(uuid())
+  contractId    String
+  issueDate     DateTime
+  amount        Float
+  contract      Contract        @relation(fields: [contractId], references: [id])
+  payments      Payment[]
+  status        InvoiceStatus   @default(UNPAID)
+  reference     String
+  coveredMonths String[]        
+
+  @@index([contractId])
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  id        String   @id @default(uuid())
+  username  String   @unique
   password  String
+  email     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
 }
+
+
+model Payment {
+  id          String   @id @default(uuid())
+  invoiceId   String
+  paymentDate DateTime
+  amountPaid  Float
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+
+  @@index([invoiceId])
+}
+
+model PrintJob {
+  id         String   @id @default(uuid())
+  coworkerId String
+  printDate  DateTime
+  pageCount  Int
+  coworker   Coworker @relation(fields: [coworkerId], references: [id])
+
+  @@index([coworkerId])
+}
+
+model Reservation {
+  id         String   @id @default(uuid())
+  roomId     String
+  coworkerId String
+  startTime  DateTime
+  endTime    DateTime
+  room       Room     @relation(fields: [roomId], references: [id])
+  coworker   Coworker @relation(fields: [coworkerId], references: [id])
+
+  @@index([roomId])
+  @@index([coworkerId])
+}
+

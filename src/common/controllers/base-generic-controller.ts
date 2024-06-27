@@ -17,10 +17,7 @@ import { BaseGenericService } from '../services/base-generic-service';
 
 @Controller()
 export class BaseGenericController<T, CreateDto, UpdateDto> {
-  constructor(
-    private readonly service: BaseGenericService<T>,
-    private readonly path: string,
-  ) {}
+  constructor(private readonly service: BaseGenericService<T>) {}
 
   @Get()
   async findAll(): Promise<T[]> {
@@ -32,9 +29,9 @@ export class BaseGenericController<T, CreateDto, UpdateDto> {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<T | null> {
+  async findOne(@Param('id') id: string): Promise<T | null> {
     try {
-      return await this.service.findOne({ where: { id: Number(id) } });
+      return await this.service.findOne({ where: { id: String(id) } });
     } catch (error) {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
@@ -46,6 +43,7 @@ export class BaseGenericController<T, CreateDto, UpdateDto> {
   @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createDto: CreateDto): Promise<T> {
+    console.log('createDto', createDto);
     try {
       return await this.service.create({ data: createDto });
     } catch (error) {
@@ -56,12 +54,12 @@ export class BaseGenericController<T, CreateDto, UpdateDto> {
   @Put(':id')
   @UsePipes(new ValidationPipe())
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @Body() updateDto: UpdateDto,
   ): Promise<T> {
     try {
       return await this.service.update({
-        where: { id: Number(id) },
+        where: { id: String(id) },
         data: updateDto,
       });
     } catch (error) {
@@ -73,9 +71,9 @@ export class BaseGenericController<T, CreateDto, UpdateDto> {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number): Promise<T> {
+  async delete(@Param('id') id: string): Promise<T> {
     try {
-      return await this.service.delete({ where: { id: Number(id) } });
+      return await this.service.delete({ where: { id: String(id) } });
     } catch (error) {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
