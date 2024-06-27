@@ -26,5 +26,5 @@ Certifique-se de ter o seguinte software instalado:
 Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/sistema-gestao-coworking.git
-cd sistema-gestao-coworking
+git clone https://github.com/sparktechao/gesprin-coworking.git
+cd gesprin-coworking
