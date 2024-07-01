@@ -1,7 +1,7 @@
 // src/invoices/invoices.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BaseGenericService } from '../common/services/base-generic-service';
+
 import { Invoice } from './entities/invoice.interface';
 import { NotificationsService } from '../notifications/notifications.service';
 import { PaymentReferenceGeneratorService } from '../payment-reference/payment-reference-generator.service';
@@ -14,6 +14,7 @@ import { ContractStatus, InvoiceStatus } from '@prisma/client';
 import { CreateSubscriptionInvoiceDto } from './dto/create-invoice.dto';
 import { EmailNotificationService } from 'src/common/notifications/email.notification.service';
 import { generateInvoiceEmailTemplate } from 'src/contracts/utils/notadepagamento.email.template.utils';
+import { BaseGenericService } from '../common/services/base-generic-service';
 
 @Injectable()
 export class InvoicesService extends BaseGenericService<Invoice> {

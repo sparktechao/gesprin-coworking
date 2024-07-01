@@ -6,6 +6,7 @@ import { ContractsService } from './contract.service';
 import { EmailNotificationService } from 'src/common/notifications/email.notification.service';
 import { JwtService } from 'src/common/jwt/jwt.service';
 import { SmsNotificationService } from 'src/common/notifications/sms-notification.service';
+import { PdfService } from 'src/common/services/pdf.service';
 
 @Module({
   controllers: [ContractsController],
@@ -15,6 +16,7 @@ import { SmsNotificationService } from 'src/common/notifications/sms-notificatio
     EmailNotificationService,
     JwtService,
     SmsNotificationService,
+    PdfService,
   ],
 })
 export class ContractsModule {}

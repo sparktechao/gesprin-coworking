@@ -7,6 +7,7 @@ import * as path from 'path';
 import { SwaggerModule } from '@nestjs/swagger';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import { PrismaClientExceptionFilter } from './common/exceptions/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,7 +42,10 @@ async function bootstrap() {
   // Configurar o Swagger
   SwaggerModule.setup('api', app, swaggerDocument);
 
-  app.useGlobalFilters(new CustomExceptionFilter());
+  app.useGlobalFilters(
+    new CustomExceptionFilter(),
+    new PrismaClientExceptionFilter(),
+  );
   await app.listen(3000);
 }
 bootstrap();

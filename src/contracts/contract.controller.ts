@@ -1,4 +1,3 @@
-// src/contracts/contracts.controller.ts
 import {
   BadRequestException,
   Body,
@@ -19,12 +18,17 @@ import { CreateContractDto } from './dto/create-contract.dto';
 import { UpdateContractDto } from './dto/update-contract.dto';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ContractsService } from './contract.service';
+import { ContractStatus } from '@prisma/client';
+import { PdfService } from 'src/common/services/pdf.service';
 
 @Controller('contracts')
 export class ContractsController {
   private readonly logger = new Logger(ContractsController.name);
 
-  constructor(private readonly contractsService: ContractsService) {}
+  constructor(
+    private readonly contractsService: ContractsService,
+    private readonly pdfService: PdfService,
+  ) {}
 
   @ApiOperation({ summary: 'Create a new contract with initial value' })
   @ApiResponse({ status: 201, description: 'The created contract.' })
@@ -44,7 +48,7 @@ export class ContractsController {
   @Get()
   async findAll(): Promise<Contract[]> {
     try {
-      return await this.contractsService.findAll();
+      return await this.contractsService.findAllContractsWithLatestValue();
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -53,7 +57,7 @@ export class ContractsController {
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<Contract | null> {
     try {
-      return await this.contractsService.findOne({ where: { id } });
+      return await this.contractsService.findContractWithLatestValue(id);
     } catch (error) {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
@@ -77,6 +81,20 @@ export class ContractsController {
       if (error.status === 404) {
         throw new NotFoundException(error.message);
       }
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Put(':id/status')
+  @UsePipes(new ValidationPipe())
+  async updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: ContractStatus,
+  ): Promise<Contract> {
+    try {
+      return await this.contractsService.updateContractStatus(id, status);
+    } catch (error) {
+      console.error('Error updating contract status:', error);
       throw new BadRequestException(error.message);
     }
   }

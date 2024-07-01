@@ -19,6 +19,7 @@ import { EmailNotificationService } from './common/notifications/email.notificat
 import { SmsNotificationService } from './common/notifications/sms-notification.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { PdfService } from './common/services/pdf.service';
 
 @Module({
   imports: [
@@ -38,7 +39,12 @@ import { UsersModule } from './users/users.module';
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, EmailNotificationService, SmsNotificationService],
+  providers: [
+    AppService,
+    EmailNotificationService,
+    SmsNotificationService,
+    PdfService,
+  ],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

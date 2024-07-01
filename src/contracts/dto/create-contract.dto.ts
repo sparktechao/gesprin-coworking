@@ -52,6 +52,5 @@ export class CreateContractDto {
     if (!this.status) {
       this.status = ContractStatus.DRAFT; // Default status
     }
-    console.log('CreateContractDto constructor called with:', this);
   }
 }

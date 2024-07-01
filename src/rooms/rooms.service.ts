@@ -1,8 +1,9 @@
 // src/rooms/rooms.service.ts
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BaseGenericService } from '../common/services/base-generic-service';
+
 import { Room } from './entities/room.interface';
+import { BaseGenericService } from '../common/services/base-generic-service';
 
 @Injectable()
 export class RoomsService extends BaseGenericService<Room> {

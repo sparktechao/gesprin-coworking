@@ -5,6 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 type Delegate<T> = {
   findMany: (args?: any) => Promise<T[]>;
@@ -36,7 +37,7 @@ export class BaseGenericService<T> {
     try {
       return await this.delegate.findMany(args);
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handlePrismaError(error);
     }
   }
 
@@ -44,7 +45,7 @@ export class BaseGenericService<T> {
     try {
       const entity = await this.delegate.findUnique({
         where: {
-          id: args.where.id.toString(), // Ensure id is treated as a string
+          id: args.where.id.toString(),
         },
       });
       if (!entity) {
@@ -52,7 +53,7 @@ export class BaseGenericService<T> {
       }
       return entity;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handlePrismaError(error);
     }
   }
 
@@ -60,7 +61,7 @@ export class BaseGenericService<T> {
     try {
       return await this.delegate.create(args);
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handlePrismaError(error);
     }
   }
 
@@ -72,7 +73,7 @@ export class BaseGenericService<T> {
       }
       return entity;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handlePrismaError(error);
     }
   }
 
@@ -84,7 +85,29 @@ export class BaseGenericService<T> {
       }
       return entity;
     } catch (error) {
-      throw new BadRequestException(error.message);
+      this.handlePrismaError(error);
+    }
+  }
+
+  private handlePrismaError(error: any): never {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      throw new BadRequestException(this.getPrismaErrorMessage(error));
+    }
+    throw new BadRequestException(error.message);
+  }
+
+  private getPrismaErrorMessage(
+    error: Prisma.PrismaClientKnownRequestError,
+  ): string {
+    switch (error.code) {
+      case 'P2002':
+        return `Erro de unicidade: O campo ${error.meta.target} já existe.`;
+      case 'P2014':
+        return 'Erro de restrição de chave estrangeira: O registro ainda está sendo referenciado por outro registro.';
+      case 'P2003':
+        return `Erro de chave estrangeira - |P2003|: ${error.message}`;
+      default:
+        return 'Erro de banco de dados desconhecido.';
     }
   }
 }

@@ -1,13 +1,16 @@
-// src/contracts/contracts.service.ts
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BaseGenericService } from '../common/services/base-generic-service';
+
 import { Contract, ContractStatus, ContractType } from '@prisma/client';
 import { CreateContractDto } from './dto/create-contract.dto';
 import { generateNuc } from './utils/nuc-generator.utils';
 import { EmailNotificationService } from 'src/common/notifications/email.notification.service';
-import { JwtService } from 'src/common/jwt/jwt.service';
 import { SmsNotificationService } from 'src/common/notifications/sms-notification.service';
+import { BaseGenericService } from '../common/services/base-generic-service';
 
 @Injectable()
 export class ContractsService extends BaseGenericService<Contract> {
@@ -15,9 +18,12 @@ export class ContractsService extends BaseGenericService<Contract> {
     private readonly prismaService: PrismaService,
     private readonly emailNotificationService: EmailNotificationService,
     private readonly smsNotificationService: SmsNotificationService,
-    private readonly jwtService: JwtService,
   ) {
     super(prismaService, 'contract');
+  }
+
+  utf8_to_b64(str: string): string {
+    return Buffer.from(str).toString('base64');
   }
 
   async createWithInitialValue(
@@ -64,8 +70,8 @@ export class ContractsService extends BaseGenericService<Contract> {
       data: {
         coworkerId: contractData.coworkerId,
         nuc: nuc, // Use generated NUC
-        startDate: new Date(contractData.startDate),
-        endDate: new Date(contractData.endDate),
+        startDate: new Date(Date.now()),
+        endDate: new Date(),
         contractType: contractData.contractType,
         status: contractData.status,
         previousContractId: contractData.previousContractId,
@@ -83,29 +89,109 @@ export class ContractsService extends BaseGenericService<Contract> {
     }
 
     if (coworker) {
-      const token = this.jwtService.generateToken({
+      const linkData = {
+        id: contract.id,
         name: coworker.name,
-        nuc: nuc,
+        email: coworker.email,
+        nuc: contract.nuc,
         status: contractData.status,
-      });
+        amount: amount,
+      };
 
-      if (contract) {
-        await this.emailNotificationService.sendEmail(
-          coworker.email,
-          'Novo Contrato Criado',
-          `<strong>Dear ${coworker.name},</strong><br>Your new contract has been created with NUC: ${contract.nuc}. Com o id ${contract.id}, e com o token ${token}`,
-          `Dear ${coworker.name}, Your new contract has been created with NUC: ${contract.nuc}. Com o id ${contract.id}`,
-        );
+      const encodedData = this.utf8_to_b64(JSON.stringify(linkData));
+      const activationLink = `http://localhost:4200/confirm-account/${encodedData}`;
 
-        const phoneNumber = coworker.phone.slice(-9); // Last 9 digits of the phone number
-        console.log('Sending SMS to:', phoneNumber);
-        await this.smsNotificationService.sendSms(
-          phoneNumber,
-          `Prezado(a) ${coworker.name}, o seu novo contrato com o  NUC: ${nuc} foi criado com sucesso. Status: ${contractData.status}.`,
-        );
-      }
+      const emailHtmlBody = `<strong>Dear ${coworker.name},</strong><br>Your new contract has been created with NUC: ${contract.nuc}. Click <a href="${activationLink}">here</a> to confirm your account.`;
+      const emailTextBody = `Dear ${coworker.name}, Your new contract has been created with NUC: ${contract.nuc}. Visit the following link to confirm your account: ${activationLink}`;
+
+      await this.emailNotificationService.sendEmail(
+        coworker.email,
+        'Novo Contrato Criado',
+        emailHtmlBody,
+        emailTextBody,
+      );
+
+      const phoneNumber = coworker.phone.slice(-9); // Last 9 digits of the phone number
+
+      await this.smsNotificationService.sendSms(
+        phoneNumber,
+        `Prezado(a) ${coworker.name}, o seu novo contrato com o  NUC: ${nuc} foi criado com sucesso. Status: ${contractData.status}. Ative seu contrato aqui: ${activationLink}`,
+      );
 
       return contract;
     }
+  }
+
+  async findContractWithLatestValue(id: string): Promise<Contract | null> {
+    const contract = await this.prismaService.contract.findUnique({
+      where: { id },
+      include: {
+        contractValues: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    if (!contract) {
+      throw new NotFoundException('Contract not found');
+    }
+
+    return contract;
+  }
+
+  async findAllContractsWithLatestValue(): Promise<Contract[]> {
+    const contracts = await this.prismaService.contract.findMany({
+      include: {
+        contractValues: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          take: 1,
+        },
+      },
+    });
+
+    return contracts;
+  }
+
+  async updateContractStatus(
+    contractId: string,
+    newStatus: ContractStatus,
+  ): Promise<Contract> {
+    const contract = await this.prismaService.contract.findUnique({
+      where: { id: contractId },
+      include: { coworker: true },
+    });
+
+    if (!contract) {
+      throw new NotFoundException('Contract not found');
+    }
+
+    if (contract.status !== ContractStatus.DRAFT) {
+      throw new BadRequestException(
+        `Não lhe é permitido alterar o status deste contrato. Status actual: ${contract.status}`,
+      );
+    }
+
+    const updatedContract = await this.prismaService.contract.update({
+      where: { id: contractId },
+      data: { status: newStatus },
+    });
+
+    const coworker = contract.coworker;
+    const emailHtmlBody = `<strong>Dear ${coworker.name},</strong><br>Your contract status has been updated to ${newStatus}.`;
+    const emailTextBody = `Dear ${coworker.name}, Your contract status has been updated to ${newStatus}.`;
+
+    await this.emailNotificationService.sendEmail(
+      coworker.email,
+      'Contrato Atualizado',
+      emailHtmlBody,
+      emailTextBody,
+    );
+
+    return updatedContract;
   }
 }

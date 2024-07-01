@@ -33,8 +33,6 @@ enum InvoiceStatus {
   CANCELED
 }
 
-
-
 model Coworker {
   id                      String                   @id @default(uuid())
   name                    String
@@ -43,9 +41,9 @@ model Coworker {
   nif                     String
   commercialCertificate   String
   notificationPreferences NotificationPreference[]
-  contracts               Contract[]
+  contracts               Contract[]               @relation("CoworkerContracts")
   printJobs               PrintJob[]
-  Reservation             Reservation[]
+  reservations            Reservation[]
 }
 
 model Room {
@@ -54,34 +52,33 @@ model Room {
   location     String
   workstations Workstation[]
   contracts    Contract[]
-  Reservation  Reservation[]
+  reservations Reservation[]
 }
 
 model Workstation {
   id            String     @id @default(uuid())
   roomId        String
   stationNumber String
-  room          Room       @relation(fields: [roomId], references: [id])
-  contracts     Contract[] @relation("WorkstationToContract") // Add relation name to contracts field
-  contractId    String? // Add the contractId field
+  room          Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  contracts     Contract[] @relation("WorkstationToContract")
+  contractId    String?
 }
 
 model Contract {
   id                 String          @id @default(uuid())
-  coworkerId         String          
+  coworkerId         String
   nuc                String
   startDate          DateTime
   endDate            DateTime
-  contractType       ContractType   @default(VIRTUAL)
+  contractType       ContractType    @default(VIRTUAL)
   previousContractId String?
   roomId             String?
   status             ContractStatus
-  coworker           Coworker        @relation(fields: [coworkerId], references: [id])
-  room               Room?           @relation(fields: [roomId], references: [id]) // Specify the references argument
+  coworker           Coworker        @relation("CoworkerContracts", fields: [coworkerId], references: [id], onDelete: Restrict)
+  room               Room?           @relation(fields: [roomId], references: [id], onDelete: SetNull)
   contractValues     ContractValue[]
   invoices           Invoice[]
-  workstation        Workstation[]   @relation("WorkstationToContract") // Add opposite relation field
-  
+  workstation        Workstation[]   @relation("WorkstationToContract")
 
   @@index([coworkerId])
   @@index([nuc])
@@ -92,10 +89,11 @@ model ContractValue {
   contractId  String
   createdAt   DateTime @default(now())
   amount      Float
-  contract    Contract @relation(fields: [contractId], references: [id])
+  contract    Contract @relation(fields: [contractId], references: [id], onDelete: Restrict)
 
   @@index([contractId])
 }
+
 
 model Invoice {
   id            String         @id @default(uuid())
@@ -106,7 +104,7 @@ model Invoice {
   payments      Payment[]
   status        InvoiceStatus   @default(UNPAID)
   reference     String
-  coveredMonths String[]        
+  coveredMonths String[]
 
   @@index([contractId])
 }
@@ -120,13 +118,12 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-
 model Payment {
   id          String   @id @default(uuid())
   invoiceId   String
   paymentDate DateTime
   amountPaid  Float
-  invoice     Invoice  @relation(fields: [invoiceId], references: [id])
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Restrict)
 
   @@index([invoiceId])
 }
@@ -147,10 +144,9 @@ model Reservation {
   coworkerId String
   startTime  DateTime
   endTime    DateTime
-  room       Room     @relation(fields: [roomId], references: [id])
-  coworker   Coworker @relation(fields: [coworkerId], references: [id])
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  coworker   Coworker @relation(fields: [coworkerId], references: [id], onDelete: Restrict)
 
   @@index([roomId])
   @@index([coworkerId])
 }
-

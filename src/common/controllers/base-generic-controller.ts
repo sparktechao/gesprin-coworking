@@ -43,7 +43,6 @@ export class BaseGenericController<T, CreateDto, UpdateDto> {
   @Post()
   @UsePipes(new ValidationPipe())
   async create(@Body() createDto: CreateDto): Promise<T> {
-    console.log('createDto', createDto);
     try {
       return await this.service.create({ data: createDto });
     } catch (error) {
