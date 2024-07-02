@@ -7,7 +7,7 @@ import * as path from 'path';
 export class PdfService {
   generatePdf(res): void {
     const doc = new PDFDocument();
-    const stream = fs.createWriteStream('carta-de-boas-vindas.pdf');
+    const stream = fs.createWriteStream('carta-de-boas-vindas.gesprin.pdf');
     doc.pipe(stream);
 
     // Definir o caminho da fonte baseado no ambiente
@@ -43,7 +43,7 @@ export class PdfService {
     doc.fontSize(fontSize).text(`Prezado(a),`, { align: 'justify' });
     doc.moveDown(1.5);
     doc.text(
-      `Bem-vindo ao Gesprin! Estamos muito contentes por tê-lo(a) connosco. Queremos garantir que a sua experiência aqui seja a melhor possível.`,
+      `Bem-vindo a Gesprin! Estamos muito contentes por tê-lo(a) connosco. Queremos garantir que a sua experiência aqui seja a melhor possível.`,
       { align: 'justify' },
     );
     doc.moveDown(1.5);
@@ -86,7 +86,7 @@ export class PdfService {
     doc.end();
 
     stream.on('finish', () => {
-      res.sendFile('carta-de-boas-vindas.pdf', { root: process.cwd() });
+      res.sendFile('carta-de-boas-vindas.gesprin.pdf', { root: process.cwd() });
     });
   }
 }
