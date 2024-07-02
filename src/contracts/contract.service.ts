@@ -99,7 +99,7 @@ export class ContractsService extends BaseGenericService<Contract> {
       };
 
       const encodedData = this.utf8_to_b64(JSON.stringify(linkData));
-      const activationLink = `http://localhost:4200/confirm-account/${encodedData}`;
+      const activationLink = `https://app.gesprin.co.ao/confirm-account/${encodedData}`;
 
       const emailHtmlBody = `<strong>Dear ${coworker.name},</strong><br>Your new contract has been created with NUC: ${contract.nuc}. Click <a href="${activationLink}">here</a> to confirm your account.`;
       const emailTextBody = `Dear ${coworker.name}, Your new contract has been created with NUC: ${contract.nuc}. Visit the following link to confirm your account: ${activationLink}`;

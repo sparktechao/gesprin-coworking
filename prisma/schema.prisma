@@ -40,7 +40,7 @@ model Coworker {
   phone                   String
   nif                     String
   commercialCertificate   String
-  notificationPreferences NotificationPreference[]
+  notificationPreferences NotificationPreference[] @default([])
   contracts               Contract[]               @relation("CoworkerContracts")
   printJobs               PrintJob[]
   reservations            Reservation[]
