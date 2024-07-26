@@ -101,8 +101,8 @@ export class ContractsService extends BaseGenericService<Contract> {
       const encodedData = this.utf8_to_b64(JSON.stringify(linkData));
       const activationLink = `https://app.gesprin.co.ao/confirm-account/${encodedData}`;
 
-      const emailHtmlBody = `<strong>Dear ${coworker.name},</strong><br>Your new contract has been created with NUC: ${contract.nuc}. Click <a href="${activationLink}">here</a> to confirm your account.`;
-      const emailTextBody = `Dear ${coworker.name}, Your new contract has been created with NUC: ${contract.nuc}. Visit the following link to confirm your account: ${activationLink}`;
+      const emailHtmlBody = `<strong>Caro(a) ${coworker.name},</strong><br>O seu novo contrato foi criado com o NUC: ${contract.nuc}. Clique <a href="${activationLink}">aqui</a> para confirmar a sua conta.`;
+      const emailTextBody = `Caro(a) ${coworker.name}, O seu novo contrato foi criado com o NUC: ${contract.nuc}. Visite o seguinte link para confirmar a sua conta: ${activationLink}`;
 
       await this.emailNotificationService.sendEmail(
         coworker.email,
@@ -182,8 +182,8 @@ export class ContractsService extends BaseGenericService<Contract> {
     });
 
     const coworker = contract.coworker;
-    const emailHtmlBody = `<strong>Dear ${coworker.name},</strong><br>Your contract status has been updated to ${newStatus}.`;
-    const emailTextBody = `Dear ${coworker.name}, Your contract status has been updated to ${newStatus}.`;
+    const emailHtmlBody = `<strong>Caro(a) ${coworker.name},</strong><br>O estado do seu contrato foi atualizado para ${newStatus}.`;
+    const emailTextBody = `Caro(a) ${coworker.name}, O estado do seu contrato foi atualizado para ${newStatus}.`;
 
     await this.emailNotificationService.sendEmail(
       coworker.email,
